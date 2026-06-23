@@ -125,12 +125,24 @@ if torch.cuda.is_available():
 1. Run the benchmark above and compare CPU vs GPU times
 2. If you don't have a GPU, run it on Google Colab and compare
 3. Check how much GPU memory you have and estimate the largest model you can fit (rule of thumb: 2 bytes per parameter for fp16)
+   1. Answer:
+
+      $$
+      \text{max params} = \frac{\text{VRAM}}{\text{bytes per param}} = \frac{16 \times 10^9 \text{ bytes}}{2 \text{ bytes/param}} = 8 \times 10^9 = 8 \text{ billion parameters/weights}
+      $$
+   2. Reality: You need weights + **activations** + **KV cache (for transformers)**. Activations/cache scale with batch size and sequence length.
+
+      | Model | Weights (fp16) | Fits on 15 GB T4?                     |
+      | ----- | -------------- | ------------------------------------- |
+      | 1.5B  | 3 GB           | ✅ easily                              |
+      | 7B    | 14 GB          | ⚠️ barely — tiny batch, short context |
+      | 8B+   | 16 GB+         | ❌ no                                  |
 
 ## Key Terms
 
-| Term | What people say | What it actually means |
-|------|----------------|----------------------|
-| CUDA | "GPU programming" | NVIDIA's parallel computing platform that lets you run code on the GPU |
-| VRAM | "GPU memory" | Video RAM on the GPU, separate from system RAM. Limits model size. |
-| fp16 | "Half precision" | 16-bit floating point, uses half the memory of fp32 with minimal accuracy loss |
+| Term        | What people say        | What it actually means                                                          |
+| ----------- | ---------------------- | ------------------------------------------------------------------------------- |
+| CUDA        | "GPU programming"      | NVIDIA's parallel computing platform that lets you run code on the GPU          |
+| VRAM        | "GPU memory"           | Video RAM on the GPU, separate from system RAM. Limits model size.              |
+| fp16        | "Half precision"       | 16-bit floating point, uses half the memory of fp32 with minimal accuracy loss  |
 | Tensor Core | "Fast matrix hardware" | Specialized GPU cores for matrix multiplication, 4-8x faster than regular cores |
