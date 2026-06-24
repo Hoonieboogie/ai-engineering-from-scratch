@@ -28,13 +28,14 @@ A vector is just a list of numbers. But those numbers mean something -- they're 
 
 **2D vector [3, 2]:**
 
-| x | y | Point |
-|---|---|-------|
+| x | y | Point                                                      |
+| - | - | ---------------------------------------------------------- |
 | 3 | 2 | The vector points from origin (0,0) to (3, 2) on the plane |
 
 The vector has magnitude sqrt(3^2 + 2^2) = sqrt(13) and points up and to the right.
 
 In AI, vectors represent everything:
+
 - A word → a vector of 768 numbers (its "meaning" in embedding space)
 - An image → a vector of millions of pixel values
 - A user → a vector of preferences
@@ -63,6 +64,7 @@ graph LR
 ```
 
 In AI, matrices ARE the model:
+
 - Neural network weights → matrices that transform input into output
 - Attention scores → matrices that decide what to focus on
 - Embeddings → matrices that map words to vectors
@@ -106,16 +108,17 @@ A basis is a minimal set of linearly independent vectors that span the entire sp
 The standard basis for 3D space is {[1,0,0], [0,1,0], [0,0,1]}. But any three independent vectors in 3D form a valid basis. The choice of basis is a choice of coordinate system.
 
 Rank of a matrix = number of linearly independent columns = number of linearly independent rows. If rank < min(rows, cols), the matrix is rank-deficient. This means:
+
 - The system has infinitely many solutions (or none)
 - Information is lost in the transformation
 - The matrix cannot be inverted
 
-| Situation | Rank | What it means for ML |
-|-----------|------|---------------------|
-| Full rank (rank = min(m, n)) | Maximum possible | Unique least-squares solution exists. Model is well-conditioned. |
-| Rank deficient (rank < min(m, n)) | Below maximum | Features are redundant. Infinitely many weight solutions. Regularization needed. |
-| Rank 1 | 1 | Every column is a scaled copy of one vector. All data lies on a line. |
-| Near rank-deficient (small singular values) | Numerically low | Matrix is ill-conditioned. Tiny input noise causes large output changes. Use SVD truncation or ridge regression. |
+| Situation                                   | Rank             | What it means for ML                                                                                             |
+| ------------------------------------------- | ---------------- | ---------------------------------------------------------------------------------------------------------------- |
+| Full rank (rank = min(m, n))                | Maximum possible | Unique least-squares solution exists. Model is well-conditioned.                                                 |
+| Rank deficient (rank < min(m, n))           | Below maximum    | Features are redundant. Infinitely many weight solutions. Regularization needed.                                 |
+| Rank 1                                      | 1                | Every column is a scaled copy of one vector. All data lies on a line.                                            |
+| Near rank-deficient (small singular values) | Numerically low  | Matrix is ill-conditioned. Tiny input noise causes large output changes. Use SVD truncation or ridge regression. |
 
 ### Projection
 
@@ -125,12 +128,20 @@ Projecting vector **a** onto vector **b** gives the component of **a** in the di
 proj_b(a) = (a dot b / b dot b) * b
 ```
 
-The residual (a - proj_b(a)) is perpendicular to b. This orthogonal decomposition is the foundation of least-squares fitting.
+<img src="Projection.png" alt="projection" width="30%">
 
-Projection is everywhere in ML:
+
+
+The residual (a - proj_b(a)) is perpendicular to b. This orthogonal decomposition is the foundation of least-squares fitProjection is everywhere in ML:
+
 - Linear regression minimizes the distance from observations to the column space -- the solution IS a projection
 - PCA projects data onto the directions of maximum variance
 - Attention in transformers computes projections of queries onto keys
+
+<img src="PCA.png" alt="projection" width="30%">
+
+
+
 
 ```mermaid
 graph LR
@@ -154,6 +165,7 @@ The projection drops the y-component. This is dimensionality reduction in its si
 Converting any set of independent vectors into an orthonormal basis. Orthonormal means every vector has length 1 and every pair is perpendicular.
 
 The algorithm:
+
 1. Take the first vector, normalize it
 2. Take the second vector, subtract its projection onto the first, normalize
 3. Take the third vector, subtract its projections onto all previous vectors, normalize
@@ -174,6 +186,7 @@ Output: u1, u2, u3, ... (orthonormal basis)
 ```
 
 This is how QR decomposition works internally. Q is the orthonormal basis, R captures the projection coefficients. QR decomposition is used in:
+
 - Solving linear systems (more stable than Gaussian elimination)
 - Computing eigenvalues (QR algorithm)
 - Least-squares regression (the standard numerical method)
@@ -421,21 +434,22 @@ You just built from scratch what NumPy does in one line. Now you know what's hap
 ## Ship It
 
 This lesson produces:
+
 - `outputs/prompt-linear-algebra-tutor.md` -- a prompt for AI assistants to teach linear algebra through geometric intuition
 
 ## Connections
 
 Everything in this lesson connects to specific parts of modern AI:
 
-| Concept | Where it shows up |
-|---------|------------------|
-| Dot product | Attention scores in transformers, cosine similarity in RAG |
-| Matrix multiply | Every neural network layer, every linear transformation |
-| Linear independence | Feature selection, avoiding multicollinearity |
-| Rank | Determining if a system is solvable, LoRA (low-rank adaptation) |
-| Projection | Linear regression (projecting onto column space), PCA |
-| Gram-Schmidt / QR | Numerical solvers, eigenvalue computation |
-| Orthonormal basis | Stable numerical computation, whitening transforms |
+| Concept             | Where it shows up                                               |
+| ------------------- | --------------------------------------------------------------- |
+| Dot product         | Attention scores in transformers, cosine similarity in RAG      |
+| Matrix multiply     | Every neural network layer, every linear transformation         |
+| Linear independence | Feature selection, avoiding multicollinearity                   |
+| Rank                | Determining if a system is solvable, LoRA (low-rank adaptation) |
+| Projection          | Linear regression (projecting onto column space), PCA           |
+| Gram-Schmidt / QR   | Numerical solvers, eigenvalue computation                       |
+| Orthonormal basis   | Stable numerical computation, whitening transforms              |
 
 LoRA deserves special mention. It fine-tunes large language models by decomposing weight updates into low-rank matrices. Instead of updating a 4096x4096 weight matrix (16M parameters), LoRA updates two matrices of size 4096x16 and 16x4096 (131K parameters). The rank-16 constraint means LoRA assumes the weight update lives in a 16-dimensional subspace of the full 4096-dimensional space. That is linear algebra doing real work.
 
@@ -450,14 +464,14 @@ LoRA deserves special mention. It fine-tunes large language models by decomposin
 
 ## Key Terms
 
-| Term | What people say | What it actually means |
-|------|----------------|----------------------|
-| Vector | "An arrow" | A list of numbers representing a point or direction in n-dimensional space |
-| Matrix | "A table of numbers" | A transformation that maps vectors from one space to another |
-| Dot product | "Multiply and sum" | A measure of how aligned two vectors are -- the core of similarity search |
-| Embedding | "Some AI magic" | A vector that represents the meaning of something (word, image, user) |
-| Linear independence | "They don't overlap" | No vector in the set can be written as a combination of the others |
-| Rank | "How many dimensions" | The number of linearly independent columns (or rows) in a matrix |
-| Projection | "The shadow" | The component of one vector in the direction of another |
-| Basis | "The coordinate axes" | A minimal set of independent vectors that span the space |
-| Orthonormal | "Perpendicular unit vectors" | Vectors that are mutually perpendicular and each have length 1 |
+| Term                | What people say              | What it actually means                                                     |
+| ------------------- | ---------------------------- | -------------------------------------------------------------------------- |
+| Vector              | "An arrow"                   | A list of numbers representing a point or direction in n-dimensional space |
+| Matrix              | "A table of numbers"         | A transformation that maps vectors from one space to another               |
+| Dot product         | "Multiply and sum"           | A measure of how aligned two vectors are -- the core of similarity search  |
+| Embedding           | "Some AI magic"              | A vector that represents the meaning of something (word, image, user)      |
+| Linear independence | "They don't overlap"         | No vector in the set can be written as a combination of the others         |
+| Rank                | "How many dimensions"        | The number of linearly independent columns (or rows) in a matrix           |
+| Projection          | "The shadow"                 | The component of one vector in the direction of another                    |
+| Basis               | "The coordinate axes"        | A minimal set of independent vectors that span the space                   |
+| Orthonormal         | "Perpendicular unit vectors" | Vectors that are mutually perpendicular and each have length 1             |
