@@ -130,8 +130,6 @@ proj_b(a) = (a dot b / b dot b) * b
 
 <img src="Projection.png" alt="projection" width="30%">
 
-
-
 The residual (a - proj_b(a)) is perpendicular to b. This orthogonal decomposition is the foundation of least-squares fitProjection is everywhere in ML:
 
 - Linear regression minimizes the distance from observations to the column space -- the solution IS a projection
@@ -139,9 +137,6 @@ The residual (a - proj_b(a)) is perpendicular to b. This orthogonal decompositio
 - Attention in transformers computes projections of queries onto keys
 
 <img src="PCA.png" alt="projection" width="30%">
-
-
-
 
 ```mermaid
 graph LR
@@ -452,6 +447,12 @@ Everything in this lesson connects to specific parts of modern AI:
 | Orthonormal basis   | Stable numerical computation, whitening transforms              |
 
 LoRA deserves special mention. It fine-tunes large language models by decomposing weight updates into low-rank matrices. Instead of updating a 4096x4096 weight matrix (16M parameters), LoRA updates two matrices of size 4096x16 and 16x4096 (131K parameters). The rank-16 constraint means LoRA assumes the weight update lives in a 16-dimensional subspace of the full 4096-dimensional space. That is linear algebra doing real work.
+
+<img src="LoRA.png" alt="projection" width="70%">
+
+W_effective = W (frozen) + A@B (trained)
+
+- A@B = ΔW = a small correction added on top of W → this is what you train.
 
 ## Exercises
 
