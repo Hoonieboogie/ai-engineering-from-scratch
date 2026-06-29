@@ -132,9 +132,11 @@ class Matrix:
             for j in range(3):
                 minor = Matrix(
                     [
-                        [self.data[r][c] for c in range(3) if c != j]
+                        [
+                            self.data[r][c] for c in range(3) if c != j
+                        ]  # keep all columns except j
                         for r in range(3)
-                        if r != i
+                        if r != i  # keep all rows except i
                     ]
                 )
                 row.append(((-1) ** (i + j)) * minor.determinant())
@@ -179,11 +181,27 @@ matrices using the adjugate method. Test it against NumPy's np.linalg.inv.
 # Check what I did to Matrix class (method implemented)
 q2_test_mat = Matrix([[1, 2, 3], [0, 1, 4], [5, 6, 0]])
 print(q2_test_mat.inverse_3x3())
-
+print("-" * 100)
 
 """
 Q3) Build a two-layer network. Using only your Matrix class (no NumPy),
 create a two-layer neural network: input (3) -> hidden (4) -> output (2).
 Initialize random weights, run a forward pass, and verify all shapes are correct.
 """
+# input shape: 1*3
+# output shape: 1*2
+
 import random
+
+input = Matrix([[1, 2, 3]])  # 1*3
+W1 = Matrix([[random.random() for _ in range(4)] for _ in range(3)])  # 3*4
+W2 = Matrix([[random.random() for _ in range(2)] for _ in range(4)])  # 4*2
+
+hidden_layer = input.matmul(W1)
+output = hidden_layer.matmul(W2)
+
+print("input :", input.shape)  # (1, 3)
+print("W1    :", W1.shape)  # (3, 4)
+print("hidden:", hidden_layer.shape)  # (1, 4)
+print("W2    :", W2.shape)  # (4, 2)
+print("output:", output.shape)  # (1, 2)
