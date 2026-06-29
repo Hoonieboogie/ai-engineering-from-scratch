@@ -43,8 +43,6 @@ graph LR
     e2 --> M --> e2p
 ```
 
-![Transformations as matrices (2D): the columns of a 2x2 matrix M are where the basis vectors [1,0] and [0,1] land. Applying M turns the unit square into the parallelogram spanned by those new basis vectors.](matrix_transformation.png)
-
 ### Rotation
 
 A 2D rotation by angle theta keeps distances and angles intact. It moves every point along a circular arc.
@@ -202,6 +200,8 @@ Eigenvector [1, -1] with eigenvalue 1:
 
 The matrix stretches space by 3x along [1, 1] and keeps [1, -1] unchanged. Every other direction is a mix of these two.
 
+![Eigenvectors and eigenvalues (2D): an eigenvector keeps its direction under a transformation; only its length changes (or flips). The eigenvalue λ is that scale factor — λ>1 stretches, 0<λ<1 shrinks, λ=1 leaves it unchanged, λ<0 flips it. Most directions are not eigenvectors because the matrix rotates them off their line.](matrix_eigenvector_eigenvalue.png)
+
 ### Eigendecomposition
 
 If a matrix has n linearly independent eigenvectors, it can be decomposed:
@@ -215,6 +215,8 @@ V^(-1) = inverse of V
 
 This says: rotate into eigenvector coordinates, scale along each axis, rotate back.
 ```
+
+![Eigendecomposition (2D): any 2x2 matrix with independent eigenvectors factors as A = V D V^(-1) (also written P Λ P^(-1)). Applying A is a three-step process — V^(-1) changes into the eigenvector basis, D scales along each eigenvector direction, and V changes back. The net effect: rotate to the eigenvector axes, stretch, rotate back.](matrix_eigendecomposition.png)
 
 ### Why eigenvalues matter
 
