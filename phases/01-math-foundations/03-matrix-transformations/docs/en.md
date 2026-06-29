@@ -43,6 +43,8 @@ graph LR
     e2 --> M --> e2p
 ```
 
+![Transformations as matrices (2D): the columns of a 2x2 matrix M are where the basis vectors [1,0] and [0,1] land. Applying M turns the unit square into the parallelogram spanned by those new basis vectors.](matrix_transformation.png)
+
 ### Rotation
 
 A 2D rotation by angle theta keeps distances and angles intact. It moves every point along a circular arc.
@@ -64,9 +66,11 @@ graph LR
     B --> R --> Bp
 ```
 
+![Rotation as a matrix (2D): the columns of R(θ) = [[cos θ, -sin θ], [sin θ, cos θ]] are where the basis vectors land after a counterclockwise rotation by θ. For θ = 90°, [1,0] → [0,1] and [0,1] → [-1,0]; lengths and angles are unchanged.](matrix_rotation.png)
+
 In 3D, you rotate around an axis. Each axis has its own rotation matrix:
 
-```
+```Shell
 Rz(theta) = | cos  -sin  0 |     Rotate around z-axis
             | sin   cos  0 |     (x-y plane spins, z stays)
             |  0     0   1 |
@@ -123,8 +127,11 @@ graph LR
 ```
 
 Shear matrices:
+
 - `Shx = [[1, k], [0, 1]]` shifts x by k * y
 - `Shy = [[1, 0], [k, 1]]` shifts y by k * x
+
+![Shearing (2D): a horizontal shear Shx = [[1, k], [0, 1]] slides each point sideways in proportion to its height (k=1 sends [0,1] → [1,1]), while a vertical shear Shy = [[1, 0], [k, 1]] slides points up in proportion to their x. Rectangles become parallelograms; areas stay the same.](matrix_shearing.png)
 
 ### Reflection
 
@@ -145,6 +152,7 @@ graph LR
 ```
 
 Reflection matrices:
+
 - Reflect across y-axis: `[[-1, 0], [0, 1]]`
 - Reflect across x-axis: `[[1, 0], [0, -1]]`
 
@@ -438,25 +446,23 @@ This lesson builds the geometric foundation for PCA (Phase 2) and neural network
 ## Exercises
 
 1. Apply rotation, scaling, and shearing to a unit square (corners at [0,0], [1,0], [1,1], [0,1]). Print the transformed corners for each. Verify that rotation preserves distances between corners.
-
 2. Find the eigenvalues of the matrix [[4, 2], [1, 3]] by hand using the characteristic equation. Then verify with your from-scratch function and with NumPy.
-
 3. Create a composition of three transformations (rotate 30 degrees, scale by [1.5, 0.8], shear with kx=0.3) and apply it to 8 points arranged in a circle. Print before and after coordinates. Compute the determinant of the composed matrix and verify it equals the product of the individual determinants.
 
 ## Key Terms
 
-| Term | What people say | What it actually means |
-|------|----------------|----------------------|
-| Rotation matrix | "Spins things" | An orthogonal matrix that moves points along circular arcs while preserving distances and angles. Determinant is always 1. |
-| Scaling matrix | "Makes things bigger" | A diagonal matrix that stretches or compresses independently along each axis. Determinant is the product of scale factors. |
-| Shearing matrix | "Slants things" | A matrix that shifts one coordinate proportionally to another, turning rectangles into parallelograms. Determinant is 1. |
-| Reflection | "Mirrors things" | A matrix that flips space across an axis or plane. Determinant is -1. |
-| Composition | "Do two things" | Multiplying transformation matrices to chain operations. Order matters: B @ A means apply A first, then B. |
-| Eigenvector | "Special direction" | A direction that the matrix only scales, never rotates. The transformation's fingerprint. |
-| Eigenvalue | "How much it stretches" | The scalar factor by which the matrix scales its eigenvector. Can be negative (flip) or complex (rotation). |
-| Eigendecomposition | "Break the matrix apart" | Writing a matrix as V @ D @ V^(-1), separating it into its fundamental scaling directions and magnitudes. |
-| Determinant | "A single number from a matrix" | The factor by which the transformation scales area (2D) or volume (3D). Zero means the transformation is irreversible. |
-| Characteristic equation | "Where eigenvalues come from" | det(A - lambda * I) = 0. The polynomial whose roots are the eigenvalues. |
+| Term                    | What people say                 | What it actually means                                                                                                     |
+| ----------------------- | ------------------------------- | -------------------------------------------------------------------------------------------------------------------------- |
+| Rotation matrix         | "Spins things"                  | An orthogonal matrix that moves points along circular arcs while preserving distances and angles. Determinant is always 1. |
+| Scaling matrix          | "Makes things bigger"           | A diagonal matrix that stretches or compresses independently along each axis. Determinant is the product of scale factors. |
+| Shearing matrix         | "Slants things"                 | A matrix that shifts one coordinate proportionally to another, turning rectangles into parallelograms. Determinant is 1.   |
+| Reflection              | "Mirrors things"                | A matrix that flips space across an axis or plane. Determinant is -1.                                                      |
+| Composition             | "Do two things"                 | Multiplying transformation matrices to chain operations. Order matters: B @ A means apply A first, then B.                 |
+| Eigenvector             | "Special direction"             | A direction that the matrix only scales, never rotates. The transformation's fingerprint.                                  |
+| Eigenvalue              | "How much it stretches"         | The scalar factor by which the matrix scales its eigenvector. Can be negative (flip) or complex (rotation).                |
+| Eigendecomposition      | "Break the matrix apart"        | Writing a matrix as V @ D @ V^(-1), separating it into its fundamental scaling directions and magnitudes.                  |
+| Determinant             | "A single number from a matrix" | The factor by which the transformation scales area (2D) or volume (3D). Zero means the transformation is irreversible.     |
+| Characteristic equation | "Where eigenvalues come from"   | det(A - lambda * I) = 0. The polynomial whose roots are the eigenvalues.                                                   |
 
 ## Further Reading
 
