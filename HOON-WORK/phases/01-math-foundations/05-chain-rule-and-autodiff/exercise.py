@@ -42,21 +42,6 @@ class Value:
         out._backward = _backward
         return out
 
-    """
-    Q1) __pow__
-    """
-
-    def __pow__(self, other):
-        other = other if isinstance(other, Value) else Value(other)
-        out = Value(self.data**other.data, (self, other), "**")
-
-        def _backward():
-            self.grad += other.data * out.grad
-            other.grad += self.data * out.grad
-
-        out._backward = _backward
-        return out
-
     def __rmul__(self, other):
         return self.__mul__(other)
 
@@ -70,6 +55,9 @@ class Value:
         return other + (-self)
 
     def __pow__(self, n):
+        """
+        Q1)
+        """
         out = Value(self.data**n, (self,), f"**{n}")
 
         def _backward():
@@ -95,6 +83,9 @@ class Value:
         return out
 
     def tanh(self):
+        """
+        Q2)
+        """
         import math
 
         t = math.tanh(self.data)
@@ -145,3 +136,8 @@ class Value:
         self.grad = 1.0
         for v in reversed(topo):
             v._backward()
+
+
+"""
+Q3)
+"""
