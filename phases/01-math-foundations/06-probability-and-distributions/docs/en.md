@@ -421,7 +421,6 @@ print(f"Log-softmax: {log_probs}")
 You built these from scratch. Now you know what the library calls are doing.
 
 ## Exercises
-
 1. Implement inverse transform sampling for the exponential distribution. Verify by sampling 10,000 values and comparing the histogram to the true PDF.
 
 2. Build a joint distribution table for two loaded dice. Compute the marginal distributions and check whether the dice are independent.
