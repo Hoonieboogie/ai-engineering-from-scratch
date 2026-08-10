@@ -138,3 +138,87 @@ if __name__ == "__main__":
         f"{are_independent(joint_dist, marginal_dice_1, marginal_dice_2)}"
     )
 
+
+"""
+Q3) Compute the cross-entropy loss for a 5-class classifier
+that outputs logits `[2.0, 0.5, -1.0, 3.0, 0.1]` when the correct class is index 3.
+Then verify your answer with PyTorch's `nn.CrossEntropyLoss`.
+"""
+# Softmax Function: p(z_i) = e^(z_i) / SUM_[j=0 to n][e^(z_j)]
+# It converts the five raw logits into five predicted probabilities that sum to 1.
+#
+# Cross-entropy Loss: H(y, p) = -SUM_[j=0 to n][y_j * log(p_j)]
+# y is the true distribution and p is the predicted distribution from softmax.
+# (Some sources use p and q instead; what matters is that the TRUE distribution
+# multiplies the log of the PREDICTED distribution.)
+#
+# The correct class is index 3, so y is a one-hot vector:
+#     y = [0, 0, 0, 1, 0]
+# Substitute it into the full cross-entropy sum:
+#     H(y, p) = -[0*log(p_0) + 0*log(p_1) + 0*log(p_2)
+#                  + 1*log(p_3) + 0*log(p_4)]
+# Every term with target value 0 disappears, leaving:
+#     loss = -log(p_3)
+# This is not a new formula; it is the general cross-entropy formula simplified
+# for a one-hot classification label. With label smoothing, other y values are
+# nonzero, so the full sum is needed again.
+import torch
+from torch import nn
+
+def softmax(logits):
+    exp_logits = [math.exp(logit) for logit in logits]
+    probabilities = [exp_logits[i] / sum(exp_logits) for i in range(len(logits))]
+    return probabilities
+
+def cross_entropy_loss(logits, true_index):
+    probabilities = softmax(logits)
+    return -math.log(probabilities[true_index]) # -log(p_3)
+
+logits = [2.0, 0.5, -1.0, 3.0, 0.1]
+criterion = nn.CrossEntropyLoss()
+target = torch.tensor([3], dtype=torch.long)
+torch_loss = criterion(torch.tensor([logits], dtype=torch.float32), target)
+
+if round(cross_entropy_loss(logits, 3), 2) ==  round(float(torch_loss), 2):
+    print("same")
+else:
+    print("different")
+
+
+"""
+Q4) Write a function that takes a list of log probabilities
+and returns the most likely sequence, the total log probability, and the equivalent raw probability.
+Test it with a sentence of 50 words where each word has probability 0.01.
+"""
+def most_likely_sequence(candidates):
+    """Return the candidate with the largest total log probability.
+
+    Each candidate is a pair: (sequence, log_probabilities). The total log
+    probability is the sum of per-word log probabilities, and exp(total)
+    recovers the equivalent raw sequence probability.
+    """
+    best_sequence = None
+    best_total_log_probability = float("-inf")
+
+    for sequence, log_probabilities in candidates:
+        total_log_probability = sum(log_probabilities)
+        if total_log_probability > best_total_log_probability:
+            best_sequence = sequence
+            best_total_log_probability = total_log_probability
+
+    raw_probability = math.exp(best_total_log_probability)
+    return best_sequence, best_total_log_probability, raw_probability
+
+
+if __name__ == "__main__":
+    # A 50-word sentence where every word has probability 0.01.
+    sentence = [f"word_{index}" for index in range(1, 51)]
+    log_probabilities = [math.log(0.01) for _ in sentence]
+
+    sequence, total_log_probability, raw_probability = most_likely_sequence(
+        [(sentence, log_probabilities)]
+    )
+    print("\n--- Log Probability of a 50-Word Sentence ---")
+    print(f"Most likely sequence: {sequence}")
+    print(f"Total log probability: {total_log_probability:.4f}")
+    print(f"Equivalent raw probability: {raw_probability:.2e}")
