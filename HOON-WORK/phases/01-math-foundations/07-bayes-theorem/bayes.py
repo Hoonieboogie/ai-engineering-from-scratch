@@ -18,16 +18,27 @@ def sequential_bayes(prior, likelihood, false_positive_rate, num_tests):
 
 class NaiveBayes:
     def __init__(self, smoothing=1.0):
-        self.smoothing = smoothing
-        self.class_counts = defaultdict(int)
-        self.word_counts = defaultdict(lambda: defaultdict(int))
-        self.class_word_totals = defaultdict(int)
-        self.vocab = set()
+        self.smoothing = smoothing  # Pseudo-count added to each feature value.
+        self.class_counts = defaultdict(int)  # e.g. {"spam": 5, "ham": 7}
+        self.word_counts = defaultdict(
+            lambda: defaultdict(int)
+        )  # e.g. {"spam": {"free": 5, "money": 1}}
+        self.class_word_totals = defaultdict(int)  # e.g. {"spam": 20, "ham": 29}
+        self.class_length_counts = defaultdict(
+            lambda: defaultdict(int)
+        )  # e.g. {"spam": {"short": 4, "long": 1}, "ham": {"short": 4, "long": 3}}
+        self.vocab = set()  # All distinct words observed across the training documents.
 
     def train(self, documents, labels):
         for doc, label in zip(documents, labels):
             self.class_counts[label] += 1
             words = doc.lower().split()
+            length_category = (
+                "short" if len(words) <= 4 else "long"
+            )  # Turn the word count into a short/long feature.
+            self.class_length_counts[label][
+                length_category
+            ] += 1  # Count this document for its class and length category.
             for word in words:
                 self.word_counts[label][word] += 1
                 self.class_word_totals[label] += 1
@@ -43,6 +54,35 @@ class NaiveBayes:
         vocab_size = len(self.vocab)
         return math.log(
             (count + self.smoothing) / (total + self.smoothing * vocab_size)
+        )
+
+    def _log_length_likelihood(self, length_category, cls):
+        """Return the length-based evidence for one class in log space.
+
+        This asks: "If a message belongs to ``cls``, how likely is it to have
+        this ``length_category``?"  For example, P(short | spam) measures how
+        often training messages labelled spam are short.  ``length_category``
+        is either ``"short"`` (4 words or fewer) or ``"long"`` (more than 4).
+
+        The probability is estimated from training counts with Laplace
+        smoothing so neither category can receive probability zero:
+
+            P(length_category | cls) =
+                (matching messages + smoothing) /
+                (all messages in cls + 2 * smoothing)
+
+        The 2 is present because there are exactly two possible categories:
+        short and long.  With 4 short messages among 5 spam messages and
+        smoothing=1.0, P(short | spam) is (4 + 1) / (5 + 2) = 5 / 7.
+
+        ``math.log`` converts that probability to log space.  Prediction can
+        then add this value to the word-based log scores, which is equivalent
+        to multiplying the original probabilities.
+        """
+        class_length_count = self.class_length_counts[cls][length_category]
+        class_total = self.class_counts[cls]
+        return math.log(
+            (class_length_count + self.smoothing) / (class_total + 2 * self.smoothing)
         )
 
     def predict(self, document):
@@ -85,6 +125,12 @@ class NaiveBayes:
                 total + self.smoothing * vocab_size
             )
         return sorted(probs.items(), key=lambda x: x[1], reverse=True)[:n]
+
+    """
+    Q3) Add features.
+    Extend the NaiveBayes class to also use message length (short/long) as a feature alongside word counts.
+    Estimate P(short|spam) and P(short|ham) from the training data and fold it into the prediction score.
+    """
 
 
 def demo_bayes_theorem():
