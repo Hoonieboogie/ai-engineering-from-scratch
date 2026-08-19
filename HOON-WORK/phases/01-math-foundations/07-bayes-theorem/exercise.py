@@ -83,3 +83,20 @@ Given observed data (7 heads in 10 coin flips),
 compute the MAP estimate of the bias using a Beta(2,2) prior.
 Compare it to the MLE estimate (7/10).
 """
+# A Beta(alpha, beta) density is proportional to
+# p^(alpha - 1) * (1 - p)^(beta - 1), where p is the coin's head probability.
+#
+# 1. Posterior update: add observed heads to alpha and tails to beta.
+# Beta(2, 2) --> Beta(2 + 7, 2 + 3) = Beta(9, 5).
+#
+# 2. MAP is the mode (highest point) of the posterior distribution:
+# p_MAP = (alpha - 1) / (alpha + beta - 2)
+#       = (9 - 1) / (9 + 5 - 2)
+#       = 8 / 12
+#       = 0.6667.
+#
+# 3. MLE ignores the prior and uses only the observed frequency:
+# p_MLE = 7 / 10 = 0.7000.
+#
+# 4. MAP is lower than MLE because the Beta(2, 2) prior mildly pulls the
+# estimate from the observed 0.7 back toward a fair coin's probability, 0.5.
