@@ -89,11 +89,12 @@ class NaiveBayes:
         words = document.lower().split()
         best_class = None
         best_score = float("-inf")
-
+        length_category = "short" if len(words) <= 4 else "long"
         for cls in self.class_counts:
-            score = self._log_prior(cls)
+            score = self._log_prior(cls)  # Starts with log P(class): the prior belief for this class.
             for word in words:
-                score += self._log_likelihood(word, cls)
+                score += self._log_likelihood(word, cls)  # Add log P(word | class) for this word to the running class score.
+            score += self._log_length_likelihood(length_category, cls)  # Add this message's log P(short or long | class) once.
             if score > best_score:
                 best_score = score
                 best_class = cls
@@ -103,11 +104,12 @@ class NaiveBayes:
     def predict_proba(self, document):
         words = document.lower().split()
         scores = {}
-
+        length_category = "short" if len(words) <= 4 else "long"
         for cls in self.class_counts:
-            score = self._log_prior(cls)
+            score = self._log_prior(cls) # Starts with log P(class): the prior belief for this class.
             for word in words:
-                score += self._log_likelihood(word, cls)
+                score += self._log_likelihood(word, cls) # Add log P(word | class) for this word to the running class score.
+            score += self._log_length_likelihood(length_category, cls) # Add this message's log P(short or long | class) once.
             scores[cls] = score
 
         max_score = max(scores.values())
@@ -125,12 +127,6 @@ class NaiveBayes:
                 total + self.smoothing * vocab_size
             )
         return sorted(probs.items(), key=lambda x: x[1], reverse=True)[:n]
-
-    """
-    Q3) Add features.
-    Extend the NaiveBayes class to also use message length (short/long) as a feature alongside word counts.
-    Estimate P(short|spam) and P(short|ham) from the training data and fold it into the prediction score.
-    """
 
 
 def demo_bayes_theorem():
