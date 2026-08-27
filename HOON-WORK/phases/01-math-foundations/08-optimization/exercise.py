@@ -135,3 +135,37 @@ for name, opt in optimizers_list.items():
 
 # Escaped
 print(escaped)
+
+
+"""
+Q4) Implement learning rate decay.
+Add an exponential decay schedule to the GradientDescent class: lr = lr_0 * 0.999^step.
+Compare convergence with and without decay on the Rosenbrock function.
+"""
+print("=" * 100)
+print("<(Q4) Learning Decay schedule>")
+
+
+# Learning decay schedule added
+class GradientDescentDecay:
+    def __init__(self, lr=0.001):
+        self.lr = lr
+        self.t = 0
+
+    def step(self, params, grads):
+        current_lr = self.lr * (0.999**self.t)
+        self.t += 1
+        return [p - current_lr * g for p, g in zip(params, grads)]
+
+
+optimizer_list = [optimizers.GradientDescent(), GradientDescentDecay()]
+start = [-1.0, 1.0]
+for opt in optimizer_list:
+    history = optimizers.optimize(
+        opt, optimizers.rosenbrock, optimizers.rosenbrock_gradient, start, steps=600
+    )
+
+    for i in range(len(history)):
+        if i % 100 == 0:
+            print(f"step{i}: {round(optimizers.rosenbrock(history[i]), 5)} |", end=" ")
+    print()
