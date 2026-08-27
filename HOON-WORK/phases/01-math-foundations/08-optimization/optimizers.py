@@ -3,13 +3,13 @@ import math
 
 def rosenbrock(params):
     x, y = params
-    return (1 - x) ** 2 + 100 * (y - x ** 2) ** 2
+    return (1 - x) ** 2 + 100 * (y - x**2) ** 2
 
 
 def rosenbrock_gradient(params):
     x, y = params
-    df_dx = -2 * (1 - x) + 200 * (y - x ** 2) * (-2 * x)
-    df_dy = 200 * (y - x ** 2)
+    df_dx = -2 * (1 - x) + 200 * (y - x**2) * (-2 * x)
+    df_dy = 200 * (y - x**2)
     return [df_dx, df_dy]
 
 
@@ -30,10 +30,7 @@ class SGDMomentum:
     def step(self, params, grads):
         if self.velocity is None:
             self.velocity = [0.0] * len(params)
-        self.velocity = [
-            self.momentum * v + g
-            for v, g in zip(self.velocity, grads)
-        ]
+        self.velocity = [self.momentum * v + g for v, g in zip(self.velocity, grads)]
         return [p - self.lr * v for p, v in zip(params, self.velocity)]
 
 
@@ -54,20 +51,16 @@ class Adam:
 
         self.t += 1
 
-        self.m = [
-            self.beta1 * m + (1 - self.beta1) * g
-            for m, g in zip(self.m, grads)
-        ]
+        self.m = [self.beta1 * m + (1 - self.beta1) * g for m, g in zip(self.m, grads)]
         self.v = [
-            self.beta2 * v + (1 - self.beta2) * g ** 2
-            for v, g in zip(self.v, grads)
+            self.beta2 * v + (1 - self.beta2) * g**2 for v, g in zip(self.v, grads)
         ]
 
-        m_hat = [m / (1 - self.beta1 ** self.t) for m in self.m]
-        v_hat = [v / (1 - self.beta2 ** self.t) for v in self.v]
+        m_hat = [m / (1 - self.beta1**self.t) for m in self.m]
+        v_hat = [v / (1 - self.beta2**self.t) for v in self.v]
 
         return [
-            p - self.lr * mh / (vh ** 0.5 + self.epsilon)
+            p - self.lr * mh / (vh**0.5 + self.epsilon)
             for p, mh, vh in zip(params, m_hat, v_hat)
         ]
 
@@ -117,7 +110,9 @@ def print_trajectory(name, history, func, steps_to_show=10):
     if total % interval != 0:
         loss = func(final)
         dist = distance_to_minimum(final)
-        print(f"  {total:6d}  {final[0]:10.6f}  {final[1]:10.6f}  {loss:14.8f}  {dist:8.4f}")
+        print(
+            f"  {total:6d}  {final[0]:10.6f}  {final[1]:10.6f}  {loss:14.8f}  {dist:8.4f}"
+        )
 
 
 def print_ascii_convergence(results, func, steps=5000):
@@ -154,13 +149,15 @@ def print_ascii_convergence(results, func, steps=5000):
         print(f"  loss 1e-8 {'.' * width} 1e+5")
         for i, pos in enumerate(bar):
             step_num = i * interval
-            line = [' '] * width
-            line[pos] = '*'
+            line = [" "] * width
+            line[pos] = "*"
             print(f"  {step_num:5d} |{''.join(line)}|")
 
         final_loss = func(history[-1])
         conv_step = find_convergence_step(history, func)
-        conv_msg = f"step {conv_step}" if conv_step < len(history) else "did not converge"
+        conv_msg = (
+            f"step {conv_step}" if conv_step < len(history) else "did not converge"
+        )
         print(f"  final loss: {final_loss:.2e}, converged (< 1e-4): {conv_msg}")
 
 
@@ -175,8 +172,8 @@ def demo_comparison():
 
     configs = [
         ("Gradient Descent", GradientDescent(lr=0.0005)),
-        ("SGD + Momentum",   SGDMomentum(lr=0.0001, momentum=0.9)),
-        ("Adam",             Adam(lr=0.01)),
+        ("SGD + Momentum", SGDMomentum(lr=0.0001, momentum=0.9)),
+        ("Adam", Adam(lr=0.01)),
     ]
 
     results = []
@@ -208,7 +205,9 @@ def demo_learning_rate_effect():
     start = [-1.0, 1.0]
     rates = [0.0001, 0.0005, 0.001, 0.005]
 
-    print(f"\n  {'LR':>8s}  {'Final x':>10s}  {'Final y':>10s}  {'Loss':>14s}  {'Status'}")
+    print(
+        f"\n  {'LR':>8s}  {'Final x':>10s}  {'Final y':>10s}  {'Loss':>14s}  {'Status'}"
+    )
     print(f"  {'-' * 60}")
 
     for lr in rates:
@@ -221,7 +220,9 @@ def demo_learning_rate_effect():
         if diverged:
             print(f"  {lr:8.4f}  {'nan':>10s}  {'nan':>10s}  {'inf':>14s}  {status}")
         else:
-            print(f"  {lr:8.4f}  {final[0]:10.6f}  {final[1]:10.6f}  {loss:14.8f}  {status}")
+            print(
+                f"  {lr:8.4f}  {final[0]:10.6f}  {final[1]:10.6f}  {loss:14.8f}  {status}"
+            )
 
 
 def demo_momentum_effect():
@@ -253,7 +254,7 @@ def demo_saddle_point():
 
     def saddle(params):
         x, y = params
-        return x ** 2 - y ** 2
+        return x**2 - y**2
 
     def saddle_gradient(params):
         x, y = params
@@ -264,8 +265,8 @@ def demo_saddle_point():
 
     configs = [
         ("Gradient Descent", GradientDescent(lr=0.01)),
-        ("SGD + Momentum",   SGDMomentum(lr=0.01, momentum=0.9)),
-        ("Adam",             Adam(lr=0.01)),
+        ("SGD + Momentum", SGDMomentum(lr=0.01, momentum=0.9)),
+        ("Adam", Adam(lr=0.01)),
     ]
 
     print(f"\n  Start: x=0.01, y=0.01 (near saddle at origin)")
@@ -277,7 +278,9 @@ def demo_saddle_point():
         final = history[-1]
         val = saddle(final)
         escaped = abs(final[1]) > 1.0
-        print(f"  {name:<22s}  {final[0]:10.6f}  {final[1]:10.6f}  {val:12.6f}  {'yes' if escaped else 'no'}")
+        print(
+            f"  {name:<22s}  {final[0]:10.6f}  {final[1]:10.6f}  {val:12.6f}  {'yes' if escaped else 'no'}"
+        )
 
 
 if __name__ == "__main__":
