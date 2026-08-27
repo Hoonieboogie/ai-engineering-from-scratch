@@ -1,6 +1,4 @@
 import math
-
-
 import optimizers
 
 """
@@ -93,3 +91,47 @@ print(f"Beta with overshoot: {list(overshoot)}")
 # How much oscillates
 for beta, steps_with_overshoot in overshoot.items():
     print(f"beta={beta}: {len(steps_with_overshoot)} overshoot steps")
+
+
+"""
+Q3) Saddle point escape.
+Define the function f(x, y) = x^2 - y^2 (a saddle point at the origin).
+Start at (0.01, 0.01).
+Compare how vanilla GD, SGD with momentum, and Adam behave.
+Which escapes the saddle point?
+"""
+print("=" * 100)
+print("<(Q3) Saddle point escape>")
+
+
+def saddle(params):
+    x, y = params
+    return x**2 - y**2
+
+
+def saddle_gradient(params):
+    x, y = params
+    df_dx = 2 * x
+    df_dy = -2 * y
+    return [df_dx, df_dy]
+
+
+start = [0.01, 0.01]  # x,y
+optimizers_list = {
+    "GD": optimizers.GradientDescent(lr=0.01),
+    "SGDM": optimizers.SGDMomentum(lr=0.01, momentum=0.9),
+    "ADAM": optimizers.Adam(lr=0.01),
+}
+escaped = []
+for name, opt in optimizers_list.items():
+    history = optimizers.optimize(opt, saddle, saddle_gradient, start, 200)
+    last = history[-1]
+    if abs(last[1]) > 1:
+        escaped.append(name)
+    print(
+        f"{name}: x={last[0]:.6f}, y={last[1]:.6f}, "
+        f"loss={saddle(last):.6f}, escaped={abs(last[1]) > 1}"
+    )
+
+# Escaped
+print(escaped)
