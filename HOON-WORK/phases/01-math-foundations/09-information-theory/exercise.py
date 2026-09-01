@@ -92,3 +92,15 @@ print(f"Cross-Entropy(mine): {H} | Cross-Entrop(given): {H_comp}")
 ## For example, with class i fixed as the true class, [0, K, 0] approaches
 ## zero loss as K -> +infinity, but no finite logit vector gives exactly 0.
 ## (Floating-point software may display 0 after rounding.)
+
+"""
+Q3) Show that KL divergence is not symmetric.
+Pick two distributions P and Q
+and compute D_KL(P || Q) and D_KL(Q || P).
+Explain why they differ.
+"""
+print("=" * 100)
+print("<Q3: KL Divergence>")
+
+# D_KL(P | Q) = H(P, Q) - H(P)
+
