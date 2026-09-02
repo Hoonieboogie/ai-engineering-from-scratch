@@ -71,7 +71,7 @@ H = -sum(h)
 # Given Cross-Entropy
 H_comp = infth.cross_entropy(true_probs, model_probs, base=math.e)
 
-print(f"Cross-Entropy(mine): {H} | Cross-Entrop(given): {H_comp}")
+print(f"Cross-Entropy(mine): {H} | Cross-Entropy(given): {H_comp}")
 
 # What logits would give zero loss?
 ## Let i be the true-class index. For a one-hot target:
@@ -126,3 +126,38 @@ print(f"D_KL(Q || P): {d_kl_q_p}")
 ##   D_KL(Q || P): Reality is Q; measure the cost of using P.
 ##
 ## These are different questions, so they generally produce different values.
+
+"""
+Q4) Build a function that computes perplexity
+for a sequence of token predictions.
+Given a list of (true_token_index, predicted_logits) pairs,
+return the perplexity of the sequence.
+"""
+print("=" * 100)
+print("<Q4: Perplexity>")
+
+# Each prediction uses the same four-token vocabulary: indices 0, 1, 2, 3.
+# (true_token_index, predicted_logits)
+token_sequence = [
+    (1, [1.2, 2.8, 0.4, -0.5]),
+    (0, [3.0, 1.0, 0.2, -1.0]),
+    (3, [0.1, 0.8, -0.2, 2.4]),
+]
+
+
+def perplexity(token_sequence):
+    net_cross_entropy = 0
+    for token in token_sequence:
+        true_token_index = token[0]
+        predicted_logits = token[1]
+
+        cross_entropy_loss = infth.cross_entropy_loss(
+            true_token_index, predicted_logits
+        )
+        net_cross_entropy += cross_entropy_loss
+    avg_cross_entropy = net_cross_entropy / len(token_sequence)
+
+    return math.exp(avg_cross_entropy)
+
+
+print(f"Perplexity: {perplexity(token_sequence)}")
