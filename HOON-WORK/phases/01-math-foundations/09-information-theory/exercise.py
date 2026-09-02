@@ -102,5 +102,27 @@ Explain why they differ.
 print("=" * 100)
 print("<Q3: KL Divergence>")
 
-# D_KL(P | Q) = H(P, Q) - H(P)
+p = [0.9, 0.1]
+q = [0.5, 0.5]
 
+d_kl_p_q = infth.kl_divergence(p, q)  # D_KL(P || Q) = H(P, Q) - H(P)
+d_kl_q_p = infth.kl_divergence(q, p)  # D_KL(Q || P) = H(Q, P) - H(Q)
+
+print(f"D_KL(P || Q): {d_kl_p_q}")
+print(f"D_KL(Q || P): {d_kl_q_p}")
+
+# Why different?
+## D_KL(P || Q) = ∑ P(x) * log(P(x) / Q(x))
+## In this direction, P(x) does two jobs:
+##   1) it provides the weighting for each outcome
+##   2) it appears in the probability ratio
+##
+## When the distributions are reversed:
+## D_KL(Q || P) = ∑ Q(x) * log(Q(x) / P(x))
+## both the weighting distribution and the ratio change.
+##
+## In plain English:
+##   D_KL(P || Q): Reality is P; measure the cost of using Q.
+##   D_KL(Q || P): Reality is Q; measure the cost of using P.
+##
+## These are different questions, so they generally produce different values.
