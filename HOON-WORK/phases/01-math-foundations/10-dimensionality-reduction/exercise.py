@@ -3,6 +3,7 @@ Q1) Modify the PCA class to support inverse_transform.
 Reconstruct MNIST digits from 10, 50, and 200 components.
 Print the reconstruction error (mean squared difference from the original) for each.
 """
+print("<Q1: PCA>")
 import numpy as np
 
 class PCA:
@@ -56,3 +57,47 @@ for n_components in n_components_list:
 
     mse = np.mean((mnist["data"] - reconstructed_X) ** 2)
     print(mse)
+
+
+"""
+Q2) Run t-SNE on the same MNIST subset with perplexity values of 5, 30, and 100.
+Describe how the output changes.
+Why does perplexity affect cluster tightness?
+"""
+print("="*100)
+print("<Q2: t-SNE>")
+from sklearn.manifold import TSNE
+import matplotlib.pyplot as plt
+
+perplexities = [5, 30, 100]
+
+mnist = fetch_openml("mnist_784", version=1, as_frame=False, parser="auto")
+X_mnist = mnist.data[:5000].astype(float)
+y_mnist = mnist.target[:5000].astype(int)
+results = {}
+
+for perplexity in perplexities:
+    tsne = TSNE(n_components=2, perplexity=perplexity, random_state=42)
+    results[perplexity] = tsne.fit_transform(X_mnist)
+
+fig, axes = plt.subplots(1, 3, figsize=(15, 4))
+for ax, perplexity in zip(axes, perplexities):
+    X_tsne = results[perplexity]
+
+    ax.scatter(
+        X_tsne[:, 0],
+        X_tsne[:, 1],
+        c=y_mnist,
+        s=5,
+        cmap="tab10",
+    )
+    ax.set_title(f"Perplexity = {perplexity}")
+    ax.set_xticks([])
+    ax.set_yticks([])
+
+plt.tight_layout()
+plt.show()
+
+# Why perplexity affects cluster tightness?
+## Low perplexity: focuses on a few closest neighbors, often creating tight or fragmented clusters.
+## High perplexity: considers more neighbors, producing broader, smoother, or more connected clusters.
