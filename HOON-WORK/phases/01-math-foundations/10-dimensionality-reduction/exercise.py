@@ -3,7 +3,7 @@ Q1) Modify the PCA class to support inverse_transform.
 Reconstruct MNIST digits from 10, 50, and 200 components.
 Print the reconstruction error (mean squared difference from the original) for each.
 """
-print("<Q1: PCA>")
+print("<Q1: PCA Intro>")
 import numpy as np
 
 class PCA:
@@ -47,7 +47,7 @@ class PCA:
         return X_reduced @ self.components + self.mean
 
 # Reconstruct MNIST digits (10, 50, 200 components)
-from sklearn.datasets import fetch_openml
+from sklearn.datasets import fetch_openml, make_classification
 mnist = fetch_openml("mnist_784", version=1, as_frame=False, parser="auto")
 n_components_list = [10, 50, 200]
 for n_components in n_components_list:
@@ -101,3 +101,48 @@ plt.show()
 # Why perplexity affects cluster tightness?
 ## Low perplexity: focuses on a few closest neighbors, often creating tight or fragmented clusters.
 ## High perplexity: considers more neighbors, producing broader, smoother, or more connected clusters.
+
+
+"""
+Q3) Take a dataset with 50 features
+where only 5 are informative (generate one with sklearn.datasets.make_classification).
+Apply PCA and check whether the explained variance curve correctly identifies
+that the data is effectively 5-dimensional.
+"""
+print("="*100)
+print("<Q3: PCA Application>")
+X_q3, y_q3 = make_classification(
+    n_samples=1000,
+    n_features=50,
+    n_informative=5,
+    n_redundant=0,
+    n_repeated=0,
+    random_state=42,
+)
+print(f"X shape: {X_q3.shape}")
+print(f"y shape: {y_q3.shape}")
+
+pca_q3 = PCA(n_components=50)
+pca_q3.fit(X_q3)
+# Cumulative varinace: how much of the dataset’s total variance is preserved if we keep the first k PCA components?
+cumulative_variance = np.cumsum(pca_q3.explained_variance_ratio_)
+
+for component, variance in enumerate(cumulative_variance, start=1):
+    print(f"components={component:>2}  cumulative_variance={variance:.4f}")
+
+plt.figure(figsize=(8, 4))
+plt.plot(range(1, 51), cumulative_variance, marker=".")
+plt.axvline(5, color="red", linestyle="--", label="5 informative features")
+plt.xlabel("Number of principal components")
+plt.ylabel("Cumulative explained variance")
+plt.title("Q3: Explained variance for a 50-feature dataset")
+plt.legend()
+plt.tight_layout()
+plt.show()
+
+# Q3 Conclusion
+# The curve rises gradually and has no sharp elbow near k=5.
+# The first five components preserve about 20% of the variance.
+# The variance is spread across many directions, not concentrated in only five.
+# Therefore, PCA does not discover a clear five-dimensional structure here.
+# The five features are informative for predicting y, but PCA ignores y and only measures variance in X.
