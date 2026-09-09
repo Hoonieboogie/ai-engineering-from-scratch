@@ -58,6 +58,8 @@ El algoritmo:
 
 La matriz de covarianza es simétrica y semi-definida positiva. Sus propios vectores son direcciones ortogonales en el espacio de características. Los valores propios le dicen cuánto variación capta cada dirección. El propio vector con los puntos de valor propio más grandes a lo largo de la dirección de la variación máxima.
 
+![Eigendecomposition of a matrix into eigenvectors and eigenvalues](assets/eigendecomposition.png)
+
 ```mermaid
 graph LR
     A["Original data (2D)\nData spread in both\nx and y directions"] -->|"PCA rotation"| B["After PCA\nPC1 captures the elongated spread\nPC2 captures the narrow spread\nDrop PC2 and you lose little info"]
