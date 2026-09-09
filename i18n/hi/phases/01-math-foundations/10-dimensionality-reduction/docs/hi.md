@@ -58,6 +58,8 @@ Dimension    Avg distance ratio (max/min between random points)
 
 स्व-संयोजन क्यों? सह-विवर्तन मैट्रिक्स सममित और सकारात्मक अर्ध-परिभाषित है। इसके स्व-वेक्टर विशेषता अंतरिक्ष में ऑर्थोगनल दिशाएं हैं। स्व-मूल्य आपको बताते हैं कि प्रत्येक दिशा कितनी भिन्नता को पकड़ती है। अधिकतम भिन्नता की दिशा के साथ सबसे बड़े स्व-मूल्य बिंदुओं वाला स्व-वेक्टर।
 
+![Eigendecomposition of a matrix into eigenvectors and eigenvalues](assets/eigendecomposition.png)
+
 ```mermaid
 graph LR
     A["Original data (2D)\nData spread in both\nx and y directions"] -->|"PCA rotation"| B["After PCA\nPC1 captures the elongated spread\nPC2 captures the narrow spread\nDrop PC2 and you lose little info"]
