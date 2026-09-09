@@ -58,6 +58,8 @@ Dimension    Avg distance ratio (max/min between random points)
 
 为什么是自定义? 变量矩阵是对称和正的半确定的.它的自向量是特征空间中的直角方向.自向值告诉你每个方向捕获多少变量.最大变量方向沿着最大变量方向的自向量.
 
+![Eigendecomposition of a matrix into eigenvectors and eigenvalues](assets/eigendecomposition.png)
+
 ```mermaid
 graph LR
     A["Original data (2D)\nData spread in both\nx and y directions"] -->|"PCA rotation"| B["After PCA\nPC1 captures the elongated spread\nPC2 captures the narrow spread\nDrop PC2 and you lose little info"]
