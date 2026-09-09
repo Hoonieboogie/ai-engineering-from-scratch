@@ -58,6 +58,8 @@ Dimension    Avg distance ratio (max/min between random points)
 
 لماذا التكوين الخاص؟ المصفوفة التجاويزية متساوية وجزئية شبه محددة. المتجهات الخاصة بها هي اتجاهات متقاطعة في مساحة الميزات. القيم الخاصة تخبرك كم التباين كل اتجاه يلتقط. المتجهات الخاصة التي لديها أكبر نقاط القيمة الخاصة على طول اتجاه أقصى التباين.
 
+![Eigendecomposition of a matrix into eigenvectors and eigenvalues](assets/eigendecomposition.png)
+
 ```mermaid
 graph LR
     A["Original data (2D)\nData spread in both\nx and y directions"] -->|"PCA rotation"| B["After PCA\nPC1 captures the elongated spread\nPC2 captures the narrow spread\nDrop PC2 and you lose little info"]
