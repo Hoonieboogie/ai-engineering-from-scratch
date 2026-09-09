@@ -58,6 +58,8 @@ The algorithm:
 
 Why eigendecomposition? The covariance matrix is symmetric and positive semi-definite. Its eigenvectors are orthogonal directions in feature space. The eigenvalues tell you how much variance each direction captures. The eigenvector with the largest eigenvalue points along the direction of maximum variance.
 
+![Eigendecomposition of a matrix into eigenvectors and eigenvalues](assets/eigendecomposition.png)
+
 ```mermaid
 graph LR
     A["Original data (2D)\nData spread in both\nx and y directions"] -->|"PCA rotation"| B["After PCA\nPC1 captures the elongated spread\nPC2 captures the narrow spread\nDrop PC2 and you lose little info"]
