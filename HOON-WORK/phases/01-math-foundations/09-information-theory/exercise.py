@@ -19,7 +19,7 @@ corpus = "Machine learning systems make predictions from patterns in data. A mod
 # corpus normalization
 normalized = "".join(ch.lower() for ch in corpus if "a" <= ch.lower() <= "z")
 alphabet_cnt = {}
-for a in normalized:
+for a in normalized: 
     if a in alphabet_cnt:
         alphabet_cnt[a] += 1
     else:
