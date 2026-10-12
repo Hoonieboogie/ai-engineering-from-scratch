@@ -6,7 +6,7 @@ Compare numerical accuracy with your power iteration version and with NumPy.
 """
 
 import numpy as np
-from svd import svd_from_scratch as svd_via_power_iteration
+from svd import reconstruct, svd_from_scratch as svd_via_power_iteration
 
 
 # Math-to-code map:
@@ -51,6 +51,17 @@ Find the rank where the image becomes visually acceptable.
 """
 
 
+def compression_ratio(m, n, k):
+    original = m * n
+    compressed = k * (m + n + 1)
+    return compressed / original
+
+
+def truncated_svd(A, k):
+    U, S, Vt = np.linalg.svd(A, full_matrices=False)
+    return U[:, :k], S[:k], Vt[:k, :]
+
+
 if __name__ == "__main__":
     # Q1
     print("<Q1: SVD with Eigendecompostion>")
@@ -78,3 +89,46 @@ if __name__ == "__main__":
     # Q2
     print("=" * 100)
     print("<Q2: Image Compression with SVD")
+    compress_ranks = [1, 5, 10, 25, 50, 100]
+
+    from sklearn.datasets import load_sample_image
+    import matplotlib.pyplot as plt
+
+    image = load_sample_image("china.jpg")
+    grayscale = image.astype(float).mean(axis=2)
+    m, n = grayscale.shape
+    # image view
+    # plt.imshow(grayscale, cmap="gray", vmin=0, vmax=255)
+    # plt.axis("off")
+    # plt.show()
+    print(m, n)  # 427 X 640
+
+    fig, axes = plt.subplots(2, 3, figsize=(15, 8))
+
+    for ax, compress_rank in zip(axes.flat, compress_ranks):
+        comp_ratio = compression_ratio(m, n, compress_rank)
+        U, S, Vt = truncated_svd(grayscale, compress_rank)
+
+        # Reconstruct
+        reconstructed_image = reconstruction(U, S, Vt.T)
+        ax.imshow(reconstructed_image, cmap="gray", vmin=0, vmax=255)
+        ax.set_title(f"Rank = {compress_rank}")
+        ax.axis("off")
+
+        relative_error = np.linalg.norm(
+            grayscale - reconstructed_image, "fro"
+        ) / np.linalg.norm(grayscale, "fro")
+        print(
+            f"Rank {compress_rank:3d}: storage ratio = {comp_ratio:.2%}, "
+            f"relative error = {relative_error:.2%}"
+        )
+
+    fig.tight_layout()
+    plt.show()
+
+    # Q2 conclusion: Rank 25 is visually acceptable for this image.
+    # It retains the main scene while using about 9.77% of the original value count.
+    # Its relative reconstruction error is about 12.84%.
+    # Higher ranks preserve more detail but require more stored values.
+    # The storage ratio compares value counts, not encoded image file sizes.
+    print("Visually acceptable rank: 25")
