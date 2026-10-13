@@ -62,6 +62,16 @@ def truncated_svd(A, k):
     return U[:, :k], S[:k], Vt[:k, :]
 
 
+"""
+Q3) Build a tiny recommendation system.
+Create a 10x8 user-movie ratings matrix with some known entries.
+Fill missing entries with row means.
+Compute SVD and reconstruct a rank-3 approximation.
+Use the reconstructed matrix to predict the missing ratings.
+Verify that the predictions are reasonable.
+"""
+
+
 if __name__ == "__main__":
     # Q1
     print("<Q1: SVD with Eigendecompostion>")
@@ -132,3 +142,32 @@ if __name__ == "__main__":
     # Higher ranks preserve more detail but require more stored values.
     # The storage ratio compares value counts, not encoded image file sizes.
     print("Visually acceptable rank: 25")
+
+    # Q3
+    print("=" * 100)
+    print("<Q3: Tiny Recommendation System")
+
+    user_movie_rating_matrix = np.array(
+        [
+            [5, 4, np.nan, 1, 2, np.nan, 4, 1],
+            [4, 5, 4, np.nan, 1, 2, np.nan, 2],
+            [5, np.nan, 5, 2, 1, 1, 4, np.nan],
+            [1, 2, np.nan, 5, 4, np.nan, 2, 5],
+            [2, np.nan, 1, 4, 5, 4, np.nan, 4],
+            [1, 1, 2, np.nan, 5, 5, 1, np.nan],
+            [4, 3, np.nan, 3, 2, 4, np.nan, 3],
+            [3, np.nan, 4, 2, 3, np.nan, 5, 2],
+            [np.nan, 2, 3, 4, 4, 5, 2, np.nan],
+            [3, 4, 3, np.nan, 3, 2, np.nan, 4],
+        ],
+        dtype=float,
+    )  # 10 X 8 user-movie ratings matrix
+
+    # axis=1 calculates one mean per user; nanmean ignores missing ratings.
+    row_means = np.nanmean(user_movie_rating_matrix, axis=1, keepdims=True)
+    missing_ratings = np.isnan(user_movie_rating_matrix)
+    filled_ratings = np.where(missing_ratings, row_means, user_movie_rating_matrix)
+
+    U, S, V = svd_via_power_iteration(filled_ratings, 3)
+    reconstructed_matrix = reconstruct(U, S, V.T)
+    print(reconstructed_matrix[missing_ratings])
